@@ -88,7 +88,9 @@ export default defineConfig({
 })
 
 ```
+
 在 vite 重启的时候可能会有没有 `consola` 依赖支持的报错，直接安装 `consola` 就行了
+
 ```
 npm install -D consola
 ```
@@ -97,7 +99,7 @@ npm install -D consola
 
 # 按需引入icon
 
-要按需引入 icon 又需要安装另外的一个插件 `unplugin-icons`，这个插件核心是用来做 svg Icon 按需解析并加载的，同时它可以基于 iconify 图标库按需图标，我们在使用的时候也不需要下载图标库，可以按需下载
+要按需引入 icon 又需要安装另外的一个插件 `unplugin-icons`，这个插件核心是用来做 svg Icon 按需解析并加载的，同时它可以基于 `iconify` 图标库按需图标，我们在使用的时候也不需要下载图标库，可以按需下载
 
 ```
 npm install -D unplugin-icons
@@ -137,6 +139,13 @@ export default defineConfig({
   ],
 }) 
 ```
+
+配置的 `enabledCollections: ['ep']` 是图标类型， `ep` 是 `iconify` 图标库中的图标类别，`ep` 表示 `element-plus`，
+
+可以前往 [iconify官网](https://icones.netlify.app/)，随便选一个图标，右下角会有图标代码，`i` 是配置项 `prefix` 的前缀，`zondicons` 是图标类型，`add-outline` 是图标名称，当需要使用此图标类型的时，需要将图标类型名称添加到 `enabledCollections` 数组中
+
+![iconify图标获取示例](../images/iconify%E5%9B%BE%E6%A0%87%E8%8E%B7%E5%8F%96%E7%A4%BA%E4%BE%8B.png)
+
 
 之后我们在使用的时候不需要引入，但使用的时候需要加上前缀，比如使用 Search 组件，以前引入后组件中使用：`<Search />`，通过上面的配置后使用：`<IconEpSearch />` 或 `<icon-ep-search />`
 
