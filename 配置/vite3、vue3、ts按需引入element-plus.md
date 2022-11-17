@@ -161,6 +161,8 @@ scr/assets/svg/about/comment.svg
 
 `unplugin-icons` 插件中有一个 `customCollections` 属性，用来做自定义图标的加载，此插件也为我们提供的 svg 的 loader 可以直接引入
 
+这里给 `FileSystemIconLoader` 传递了第二参数，设置 svg 的颜色为当前 css 的 color 值
+
 ```
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 export default defineConfig({
@@ -183,8 +185,8 @@ export default defineConfig({
       autoInstall: true,
       compiler: 'vue3',
       customCollections: {
-        'home': FileSystemIconLoader('src/assets/svg/home'),
-        'about': FileSystemIconLoader('src/assets/svg/about')
+        'home': FileSystemIconLoader('src/assets/svg/home', svg => svg.replace(/^<svg / , '<svg fill="currentColor" ')),
+        'about': FileSystemIconLoader('src/assets/svg/about', svg => svg.replace(/^<svg / , '<svg fill="currentColor" '))
       }
     }),
   ],
@@ -241,8 +243,8 @@ export default defineConfig({
       autoInstall: true,
       compiler: 'vue3',
       customCollections: {
-        'home': FileSystemIconLoader('src/assets/svg/home'),
-        'about': FileSystemIconLoader('src/assets/svg/about')
+        'home': FileSystemIconLoader('src/assets/svg/home', svg => svg.replace(/^<svg / , '<svg fill="currentColor" ')),
+        'about': FileSystemIconLoader('src/assets/svg/about', svg => svg.replace(/^<svg / , '<svg fill="currentColor" '))
       }
     }),
     createStyleImportPlugin({

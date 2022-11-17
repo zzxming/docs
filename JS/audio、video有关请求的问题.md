@@ -77,7 +77,11 @@ res.set({
 
 需要设置响应头 206，否则不会自动请求下一段数据
 
-nodejs 里获取其他网址的数据，如果获得的是 readablestream 则可以通过请求到的 data 直接 .pipe(res) 发送出去，如果要流式的话得设置响应头和响应 http 状态码 206
+nodejs 里获取其他网址的数据，如果获得的是 readablestream 则可以通过请求到的 data 直接 `.pipe(res)` 发送出去，如果要流式的话得设置响应头和响应 http 状态码 206
 
-设置的 content-range 范围的最大值，不能超出 content-length，否则会导致音频不能播放
 
+# content-range
+
+在手机端 ios 的 Safari 请求头中 `range` 字段的值是 `bytes=0-1`， 而 pc 端 chrome 或 android 端发送的只是 `bytes=0-`。即 chrome 请求都是第 0 个字节到最后 1 个字节， chrome 不强制要求服务端支持范围请求，服务端响应 200 或 206， chrome都能支持。但是 safari 要求服务端必须支持视频的范围请求， safari 会先请求视频的第 0 个字节到第 1 个字节，来测试服务端是否支持范围请求，如果服务端支持范围请求，则响应状态码 206，响应头中有正确的 `Content-Range` 字段，响应体是视频的第一个字节，此时， safari 才会继续请求视频的其他字节，否则 safari 会放弃该视频的请求。
+
+如果在返回时设置的 Content-Range 超出范围时，会导致 auido 停止并无法播放，需要正确设置 Content-Range 的 start range 和 end range，Content-Range 的总数据长度是浏览器判断文件是否获取完毕的依据 
