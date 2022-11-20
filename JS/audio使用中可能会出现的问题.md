@@ -40,8 +40,36 @@ note：The preload attribute is supported in Safari 5.0 and later. Safari on iOS
 
 此时我们可以不使用 canplay 事件来监听，改成使用 `durationchange` 事件来监听当前音视频时长是否发生变化
 
-在 ios 手机端 safari 浏览器无法调整歌曲进度，每当跳转进度时会导致歌曲播放暂停，如果监听了 ended 事件会直接触发 ended 事件，及时歌曲已经加载完成
+safari 不能自动播放音频，需要用户点击之后才能播放，我解决方式是在 emptied 事件中调用 play() 直接播放，当 audio 制空自然无法播放，而当调用 audio.load() 的时候，emptied 也会执行，也就自动播放了
 
-# canplay事件
+在 ios 手机端 safari 浏览器无法调整歌曲进度，每当跳转进度时会导致歌曲播放暂停，如果监听了 ended 事件会直接触发 ended 事件，即使歌曲已经加载完成
 
-canplay 事件在 pc 端 chrome 和安卓端是会触发多次的，但在 ios 的 safari 只会在 play() 调用后触发一次，
+我在使用时有碰到过这个问题，是获取哔哩哔哩音频然后返回到自己的页面上时出现，但当使用网易云音乐的音频 url 直接赋值给 audio 标签时是可以正常跳转进度的
+
+关于这点只找到一个很久之前的文章有提到：[关于有些MP3不能在safari上快进的问题](https://blog.csdn.net/suxianbaozi/article/details/9184613)，内容如下
+```
+mp3 的编码格式有三种
+ABR CBR VBR
+啥东西不细说，但是有点区别
+
+VBR是最完美的编码格式  编码速率 动态变化
+CBR是比较老的格式  编码速率 不变 
+ABR前两者之间   
+但是一些老的播放器对VBR的支持不是很好
+
+关键点来啦
+VBR在safari的audio播放器里不能快进，对audio设置 currentTime直接歌曲播放结束，蛋疼吧，哈哈哈哈哈
+
+在用ffmpeg或者avconv 进行其他格式转换到MP3的时候，默认用的是VBR编码，如何制定为CBR呢，方法如下
+
+avconv -i 原文件 -ab 128k -f mp3 目标文件  
+
+最大速率和最小速率相等，就自动用cbr编码啦，嘿嘿嘿
+```
+
+# 事件
+
+canplay 事件在 pc 端 chrome 和安卓端是会触发多次的，但在 ios 的 safari 只会在 play() 调用后触发一次
+
+audio 加载错误信息需要获取 audio 标签，使用 dom.error 获取错误信息，错误信息为 MediaError 类型，具体字段查看[mdn链接](https://developer.mozilla.org/en-US/docs/Web/API/MediaError)
+
